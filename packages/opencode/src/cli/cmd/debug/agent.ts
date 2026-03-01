@@ -155,7 +155,7 @@ async function createToolContext(agent: Agent.Info) {
     abort: new AbortController().signal,
     messages: [],
     metadata: () => {},
-    async ask(req: Omit<Permission.Request, "id" | "sessionID" | "tool">) {
+    async ask(req: Omit<Permission.Request, "id" | "sessionID">) {
       for (const pattern of req.patterns) {
         const rule = Permission.evaluate(req.permission, pattern, ruleset)
         if (rule.action === "deny") {

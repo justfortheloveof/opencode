@@ -78,7 +78,9 @@ export const BatchTool = Tool.define("batch", async () => {
             },
           })
 
-          const result = await tool.execute(validatedParams, { ...ctx, callID: partID })
+          const ask: typeof ctx.ask = async (req) =>
+            ctx.ask({ ...req, tool: { messageID: ctx.messageID, callID: partID } })
+          const result = await tool.execute(validatedParams, { ...ctx, callID: partID, ask })
           const attachments = result.attachments?.map((attachment) => ({
             ...attachment,
             id: PartID.ascending(),
