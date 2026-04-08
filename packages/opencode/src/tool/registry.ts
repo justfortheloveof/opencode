@@ -1,3 +1,4 @@
+import { makeBatch } from "./batch"
 import { PlanExitTool } from "./plan"
 import { Session } from "../session"
 import { QuestionTool } from "./question"
@@ -101,6 +102,7 @@ export namespace ToolRegistry {
       const config = yield* Config.Service
       const plugin = yield* Plugin.Service
       const agents = yield* Agent.Service
+      const sessions = yield* Session.Service
       const skill = yield* Skill.Service
       const truncate = yield* Truncate.Service
 
@@ -201,6 +203,13 @@ export namespace ToolRegistry {
             plan: Tool.init(plan),
           })
 
+          const batch = makeBatch({
+            all: [...Object.values(tool), ...custom],
+            sessions,
+            agents: agent,
+            plugin,
+          })
+
           return {
             custom,
             builtin: [
@@ -220,6 +229,7 @@ export namespace ToolRegistry {
               tool.skill,
               tool.patch,
               ...(Flag.OPENCODE_EXPERIMENTAL_LSP_TOOL ? [tool.lsp] : []),
+              ...(cfg.experimental?.batch_tool === true ? [batch] : []),
               ...(Flag.OPENCODE_EXPERIMENTAL_PLAN_MODE && Flag.OPENCODE_CLIENT === "cli" ? [tool.plan] : []),
             ],
             task: tool.task,

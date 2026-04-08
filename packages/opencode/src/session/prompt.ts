@@ -388,7 +388,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
               .ask({
                 ...req,
                 sessionID: input.session.id,
-                tool: { messageID: input.processor.message.id, callID: options.toolCallId },
+                tool: req.tool ?? { messageID: input.processor.message.id, callID: options.toolCallId },
                 ruleset: Permission.merge(input.agent.permission, input.session.permission ?? []),
               })
               .pipe(Effect.orDie),

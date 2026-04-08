@@ -73,6 +73,28 @@ describe("tool.registry", () => {
     ),
   )
 
+  it.live("includes batch tool when experimental.batch_tool is true", () =>
+    provideTmpdirInstance(
+      () =>
+        Effect.gen(function* () {
+          const registry = yield* ToolRegistry.Service
+          const ids = yield* registry.ids()
+          expect(ids).toContain("batch")
+        }),
+      { config: { experimental: { batch_tool: true } } },
+    ),
+  )
+
+  it.live("excludes batch tool by default", () =>
+    provideTmpdirInstance(() =>
+      Effect.gen(function* () {
+        const registry = yield* ToolRegistry.Service
+        const ids = yield* registry.ids()
+        expect(ids).not.toContain("batch")
+      }),
+    ),
+  )
+
   it.live("loads tools with external dependencies without crashing", () =>
     provideTmpdirInstance((dir) =>
       Effect.gen(function* () {
